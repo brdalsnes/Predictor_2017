@@ -70,4 +70,12 @@ public class Event implements Serializable {
     public void setYes(Long yes) {
         this.yes = yes;
     }
+
+    public void addYes(){
+        this.yes ++;
+    }
+
+    public void addNo(){
+        this.no ++;
+    }
 }

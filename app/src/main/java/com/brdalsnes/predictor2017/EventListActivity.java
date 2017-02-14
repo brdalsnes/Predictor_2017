@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class EventListActivity extends Activity {
@@ -30,6 +31,7 @@ public class EventListActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_event_list);
+        ButterKnife.inject(this);
 
         Bundle extras = getIntent().getExtras();
         eventList = (ArrayList<Event>) extras.getSerializable("eventList");

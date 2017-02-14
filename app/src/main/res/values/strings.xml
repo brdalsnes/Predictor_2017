@@ -3,6 +3,7 @@
     <string name="predictions">Predictions</string>
     <string name="pick_events">Pick Events</string>
     <string name="dunno">I have no idea</string>
+    <string name="info">Which of the following events is most likely to happen in 2017?</string>
 
     <string name="category_prompt">All</string>
     <string-array name="category_arrays">
@@ -15,4 +16,5 @@
     </string-array>
     <string name="title_activity_list">ListActivity</string>
     <string name="title_activity_event_list">EventListActivity</string>
+    <string name="title_activity_dispaly">DispalyActivity</string>
 </resources>

@@ -12,7 +12,7 @@
         android:layout_alignParentTop="true"
         android:padding="8dp"
         android:orientation="horizontal"
-        android:background="@color/primary">
+        android:background="@color/bar">
 
         <Spinner
             android:layout_width="0dp"
@@ -28,8 +28,10 @@
             android:id="@+id/change_activity_text"
             android:text="@string/predictions"
             android:textSize="18sp"
+            android:textColor="@color/secondary"
             android:paddingLeft="8dp"
             android:paddingStart="8dp"
+            android:gravity="center"
             android:layout_weight="1"/>
 
     </LinearLayout>
@@ -51,7 +53,7 @@
             android:gravity="center"
             android:padding="8dp"
             android:layout_margin="4dp"
-            android:background="@drawable/list_item_bg">
+            android:background="@drawable/item_bg">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -59,7 +61,7 @@
                 android:id="@+id/statement1"
                 android:padding="4dp"
                 android:textSize="24sp"
-                android:textColor="@color/primary"/>
+                android:textColor="@color/bar"/>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -78,7 +80,7 @@
             android:gravity="center"
             android:padding="8dp"
             android:layout_margin="4dp"
-            android:background="@drawable/list_item_bg">
+            android:background="@drawable/item_bg">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -86,7 +88,7 @@
                 android:id="@+id/statement2"
                 android:padding="4dp"
                 android:textSize="24sp"
-                android:textColor="@color/primary"/>
+                android:textColor="@color/bar"/>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -101,11 +103,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/dunno"
-        android:background="@drawable/list_item_bg"
+        android:background="@drawable/item_bg"
         android:layout_margin="4dp"
         android:text="@string/dunno"
         android:textSize="24sp"
-        android:textColor="@color/primary"
+        android:textColor="@color/bar"
         android:gravity="center"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"/>

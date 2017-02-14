@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -15,15 +17,17 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class MainActivity extends Activity {
 
     private DatabaseReference database;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseAuth.AuthStateListener authStateListener;
-
     private ArrayList<Event> eventList = new ArrayList<Event>();
 
+
+    @InjectView(R.id.main_layout) RelativeLayout main_layout;
 
 
     @Override
@@ -55,9 +59,14 @@ public class MainActivity extends Activity {
                     Log.i("Length", eventList.size() + "");
                 }
 
-                Intent intent = new Intent(MainActivity.this, DisplayActivity.class);
-                intent.putExtra("eventList", eventList);
-                startActivity(intent);
+                main_layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainActivity.this, DisplayActivity.class);
+                        intent.putExtra("eventList", eventList);
+                        startActivity(intent);
+                    }
+                });
             }
 
             @Override

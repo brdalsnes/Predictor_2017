@@ -73,7 +73,8 @@ public class EventListActivity extends Activity {
         change_activity_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(EventListActivity.this, MainActivity.class);
+                Intent intent = new Intent(EventListActivity.this, DisplayActivity.class);
+                intent.putExtra("eventList", eventList);
                 startActivity(intent);
             }
         });

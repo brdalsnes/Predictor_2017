@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
 
 
@@ -22,6 +28,7 @@ import java.util.ArrayList;
  */
 public class EventAdapter extends BaseAdapter implements View.OnClickListener {
 
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
     private Activity activity;
     private ArrayList<Event> eventList = new ArrayList<>();
     private static LayoutInflater inflater = null;
@@ -31,7 +38,6 @@ public class EventAdapter extends BaseAdapter implements View.OnClickListener {
     public EventAdapter(Activity activity, ArrayList<Event> eventList){
         this.activity = activity;
         this.eventList = eventList;
-        eventList.clear();
         inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -60,7 +66,7 @@ public class EventAdapter extends BaseAdapter implements View.OnClickListener {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        ViewHolder holder;
+        final ViewHolder holder;
 
         if(convertView == null){
             convertView = inflater.inflate(R.layout.list_item, null);
@@ -91,18 +97,27 @@ public class EventAdapter extends BaseAdapter implements View.OnClickListener {
             holder.probabilityTextView.setTextColor(getColor(tempEvent.getProbability()));
 
             //Image things
-            int imageId = activity.getResources().getIdentifier(tempEvent.getImage(), "drawable", "com.brdalsnes.predictable");
+            final long ONE_MEGABYTE = 1024 * 1024;
+            final StorageReference storageReference = storage.getReferenceFromUrl("gs://predictor2017-b6577.appspot.com");
+            StorageReference imageRef = storageReference.child(tempEvent.getImage() + ".jpg");
 
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            Bitmap bitImage = BitmapFactory.decodeResource(activity.getResources(), imageId, options);
+            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bitImage = BitmapFactory.decodeByteArray(bytes, 1, bytes.length);
+                    DisplayMetrics dm = new DisplayMetrics();
+                    activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
 
-            DisplayMetrics metrics = new DisplayMetrics();
-            activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-            holder.eventImageView.getLayoutParams().height = 180;
-            holder.eventImageView.getLayoutParams().width = 180;
-
-            holder.eventImageView.setImageBitmap(bitImage);
+                    holder.eventImageView.getLayoutParams().height = 200;
+                    holder.eventImageView.getLayoutParams().width = 200;
+                    holder.eventImageView.setImageBitmap(bitImage);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            });
 
             //Set clicks
             holder.eventImageView.setOnClickListener(new View.OnClickListener() {
@@ -169,6 +184,7 @@ public class EventAdapter extends BaseAdapter implements View.OnClickListener {
         long factor = (long) Math.pow(10, places);
         value = value * factor;
         long tmp = Math.round(value);
+
         return (double) tmp / factor;
     }
 }

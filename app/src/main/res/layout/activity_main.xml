@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.brdalsnes.predictor2017.MainActivity">
+    tools:context="com.brdalsnes.predictor2017.MainActivity"
+    android:id="@+id/main_layout">
 
     <TextView
         android:layout_width="match_parent"

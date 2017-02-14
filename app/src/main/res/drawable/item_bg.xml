@@ -9,7 +9,7 @@
         android:top="20dp"/>
 
     <stroke
-        android:width="8dp"
+        android:width="2dp"
         android:color="@color/primary" />
 
     <corners

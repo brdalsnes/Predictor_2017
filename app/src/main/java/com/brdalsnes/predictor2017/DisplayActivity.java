@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -56,6 +57,9 @@ public class DisplayActivity extends Activity {
         database = FirebaseDatabase.getInstance().getReference();
 
         //Handle spinner for category choice
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_item);
+        categoriesSpinner.setAdapter(adapter);
+
         categoriesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

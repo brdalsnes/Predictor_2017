@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -20,7 +21,7 @@ public class EventListActivity extends Activity {
     EventAdapter eventAdapter;
 
     private ArrayList<Event> eventList = new ArrayList<>();
-    private String category;
+    private ArrayList<Event> categoryList = new ArrayList<>();
 
 
     @InjectView(R.id.categoriesSpinner) Spinner categoriesSpinner;
@@ -33,32 +34,36 @@ public class EventListActivity extends Activity {
         setContentView(R.layout.content_event_list);
         ButterKnife.inject(this);
 
-        Bundle extras = getIntent().getExtras();
-        eventList = (ArrayList<Event>) extras.getSerializable("eventList");
+        eventList = (ArrayList<Event>) getIntent().getSerializableExtra("eventList");
+        //categoryList = (ArrayList<Event>)eventList.clone();
 
+        //Dropdown customization
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.category_arrays, R.layout.custom_spinner_item);
+        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
+        categoriesSpinner.setAdapter(adapter);
 
         //Handle spinner for category choice
         categoriesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                switch (i) {
+                switch(i){
                     case 0:
-                        category = "All";
+                        updateCategory("All");
                         break;
                     case 1:
-                        category = "Politics";
+                        updateCategory("Politics");
                         break;
                     case 2:
-                        category = "Economics";
+                        updateCategory("Economics");
                         break;
                     case 3:
-                        category = "Sports";
+                        updateCategory("Sports");
                         break;
                     case 4:
-                        category = "Entertainment";
+                        updateCategory("Entertainment");
                         break;
                     case 5:
-                        category = "ST";
+                        updateCategory("ST");
                         break;
                 }
             }
@@ -85,5 +90,18 @@ public class EventListActivity extends Activity {
         list.setAdapter(eventAdapter);
         eventAdapter.notifyDataSetChanged();
 
+    }
+
+    public void updateCategory(String category){
+        categoryList.clear();
+        if(category.equals("All")){
+            categoryList = (ArrayList<Event>)eventList.clone();
+            return;
+        }
+        for(int i = 0; i < eventList.size(); i++){
+            if(eventList.get(i).getCategory().equals(category)){
+                categoryList.add(eventList.get(i));
+            }
+        }
     }
 }

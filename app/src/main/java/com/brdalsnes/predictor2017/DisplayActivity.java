@@ -33,8 +33,8 @@ public class DisplayActivity extends Activity {
 
     private DatabaseReference database;
     private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private ArrayList<Event> eventList = new ArrayList<Event>();
-    private String category;
+    private ArrayList<Event> eventList = new ArrayList<>();
+    private ArrayList<Event> categoryList = new ArrayList<>();
 
     @InjectView(R.id.statement1) TextView statement1;
     @InjectView(R.id.image1) ImageView image1;
@@ -53,36 +53,40 @@ public class DisplayActivity extends Activity {
         ButterKnife.inject(this);
 
         eventList = (ArrayList<Event>) getIntent().getSerializableExtra("eventList");
+        categoryList = (ArrayList<Event>)eventList.clone();
 
         database = FirebaseDatabase.getInstance().getReference();
 
-        //Handle spinner for category choice
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_item);
+        //Dropdown customization
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.category_arrays, R.layout.custom_spinner_item);
+        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown);
         categoriesSpinner.setAdapter(adapter);
 
+        //Handle spinner for category choice
         categoriesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 switch(i){
                     case 0:
-                        category = "All";
+                        updateCategory("All");
                         break;
                     case 1:
-                        category = "Politics";
+                        updateCategory("Politics");
                         break;
                     case 2:
-                        category = "Economics";
+                        updateCategory("Economics");
                         break;
                     case 3:
-                        category = "Sports";
+                        updateCategory("Sports");
                         break;
                     case 4:
-                        category = "Entertainment";
+                        updateCategory("Entertainment");
                         break;
                     case 5:
-                        category = "ST";
+                        updateCategory("ST");
                         break;
                 }
+                onResume();
             }
 
             @Override
@@ -105,8 +109,7 @@ public class DisplayActivity extends Activity {
         dunno.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
-                startActivity(getIntent());
+                onResume();
             }
         });
 
@@ -116,10 +119,13 @@ public class DisplayActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
+        Log.i("Cat", categoryList.size() + "");
+        Log.i("Evt", eventList.size() + "");
+
         //Pick two random events
-        int[] indexes = getTwoRandomIndexes(eventList.size());
-        final Event event1 = eventList.get(indexes[0]);
-        final Event event2 = eventList.get(indexes[1]);
+        int[] indexes = getTwoRandomIndexes(categoryList.size());
+        final Event event1 = categoryList.get(indexes[0]);
+        final Event event2 = categoryList.get(indexes[1]);
 
         statement1.setText(event1.getStatement());
         statement2.setText(event2.getStatement());
@@ -224,4 +230,16 @@ public class DisplayActivity extends Activity {
         return (Math.exp(yes/b)/(Math.exp(yes/b) + Math.exp(no/b))) * 100; //Magic formula, LMSR
     }
 
+    public void updateCategory(String category){
+        categoryList.clear();
+        if(category.equals("All")){
+            categoryList = (ArrayList<Event>)eventList.clone();
+            return;
+        }
+        for(int i = 0; i < eventList.size(); i++){
+            if(eventList.get(i).getCategory().equals(category)){
+                categoryList.add(eventList.get(i));
+            }
+        }
+    }
 }

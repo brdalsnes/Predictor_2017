@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/change_activity_text"
             android:text="@string/pick_events"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textColor="@color/secondary"
             android:paddingLeft="8dp"
             android:paddingStart="8dp"

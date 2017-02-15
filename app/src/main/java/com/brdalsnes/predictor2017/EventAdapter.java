@@ -104,7 +104,7 @@ public class EventAdapter extends BaseAdapter implements View.OnClickListener {
             imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {
-                    Bitmap bitImage = BitmapFactory.decodeByteArray(bytes, 1, bytes.length);
+                    Bitmap bitImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                     DisplayMetrics dm = new DisplayMetrics();
                     activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
 

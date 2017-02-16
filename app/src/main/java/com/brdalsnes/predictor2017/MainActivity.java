@@ -15,6 +15,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -59,6 +61,8 @@ public class MainActivity extends Activity {
                     Log.i("Length", eventList.size() + "");
                 }
 
+                sortProbability(); //Sort by highest probability
+
                 main_layout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -73,6 +77,18 @@ public class MainActivity extends Activity {
             public void onCancelled(DatabaseError databaseError) {
                 Log.i("ERROR", "data");
 
+            }
+        });
+    }
+
+    public void sortProbability(){
+        Collections.sort(eventList, new Comparator<Event>() {
+            @Override
+            public int compare(Event lhs, Event rhs) {
+                if(lhs.getProbability() == rhs.getProbability()){
+                    return 0;
+                }
+                return lhs.getProbability() > rhs.getProbability() ? -1 : 1;
             }
         });
     }

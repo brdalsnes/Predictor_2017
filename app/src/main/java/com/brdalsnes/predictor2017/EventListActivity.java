@@ -3,6 +3,7 @@ package com.brdalsnes.predictor2017;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -35,7 +36,7 @@ public class EventListActivity extends Activity {
         ButterKnife.inject(this);
 
         eventList = (ArrayList<Event>) getIntent().getSerializableExtra("eventList");
-        //categoryList = (ArrayList<Event>)eventList.clone();
+        categoryList = (ArrayList<Event>)eventList.clone();
 
         //Dropdown customization
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.category_arrays, R.layout.custom_spinner_item);
@@ -66,6 +67,7 @@ public class EventListActivity extends Activity {
                         updateCategory("ST");
                         break;
                 }
+                onResume();
             }
 
             @Override
@@ -84,18 +86,24 @@ public class EventListActivity extends Activity {
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         //Create list
         list = (ListView) findViewById(R.id.listView);
-        eventAdapter = new EventAdapter(EventListActivity.this, eventList);
+        eventAdapter = new EventAdapter(EventListActivity.this, categoryList);
         list.setAdapter(eventAdapter);
         eventAdapter.notifyDataSetChanged();
-
     }
 
     public void updateCategory(String category){
         categoryList.clear();
         if(category.equals("All")){
             categoryList = (ArrayList<Event>)eventList.clone();
+            Log.i("Len", categoryList.size() + "");
             return;
         }
         for(int i = 0; i < eventList.size(); i++){

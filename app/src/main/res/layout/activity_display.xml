@@ -61,6 +61,7 @@
                 android:id="@+id/statement1"
                 android:padding="4dp"
                 android:textSize="24sp"
+                android:gravity="center"
                 android:textColor="@color/bar"/>
 
             <ImageView
@@ -88,6 +89,7 @@
                 android:id="@+id/statement2"
                 android:padding="4dp"
                 android:textSize="24sp"
+                android:gravity="center"
                 android:textColor="@color/bar"/>
 
             <ImageView

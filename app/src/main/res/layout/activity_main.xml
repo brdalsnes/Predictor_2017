@@ -4,14 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.brdalsnes.predictor2017.MainActivity"
-    android:id="@+id/main_layout">
+    android:id="@+id/main_layout"
+    android:background="@color/bar"
+    android:padding="8dp">
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/info_text"
         android:text="@string/info"
         android:textSize="36sp"
-        android:gravity="center"/>
+        android:textColor="@color/secondary"
+        android:gravity="center"
+        android:layout_centerVertical="true"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/click"
+        android:textSize="12sp"
+        android:textColor="@color/list_edge"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

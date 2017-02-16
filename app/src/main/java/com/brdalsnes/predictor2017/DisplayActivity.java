@@ -176,7 +176,6 @@ public class DisplayActivity extends Activity {
         layout1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("TAG", event1.getName());
                 handleClick(event1, event2);
             }
         });

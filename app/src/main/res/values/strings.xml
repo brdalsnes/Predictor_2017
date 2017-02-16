@@ -4,6 +4,7 @@
     <string name="pick_events">Pick Events</string>
     <string name="dunno">I have no idea</string>
     <string name="info">Which of the following events is most likely to happen in 2017?</string>
+    <string name="click">Click to continue</string>
 
     <string name="category_prompt">All</string>
     <string-array name="category_arrays">

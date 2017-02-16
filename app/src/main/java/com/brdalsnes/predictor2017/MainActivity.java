@@ -3,11 +3,16 @@ package com.brdalsnes.predictor2017;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,10 +27,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class MainActivity extends Activity {
-
     private DatabaseReference database;
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private FirebaseAuth.AuthStateListener authStateListener;
+    private FirebaseAuth auth;
+    private FirebaseAuth.AuthStateListener authListener;
     private ArrayList<Event> eventList = new ArrayList<Event>();
 
 
@@ -39,13 +43,41 @@ public class MainActivity extends Activity {
         ButterKnife.inject(this);
 
         database = FirebaseDatabase.getInstance().getReference();
+        auth = FirebaseAuth.getInstance();
 
-        Log.i("TAG", "Hi!");
+        //Authentification
+        authListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+
+                } else {
+                    // User is signed out
+
+                }
+            }
+        };
+        auth.signInAnonymously().addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                // If sign in fails, display a message to the user. If sign in succeeds
+                // the auth state listener will be notified and logic to handle the
+                // signed in user can be handled in the listener.
+                if (!task.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
         //Make list of all events
         database.child("Events").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.i("TAG", "Finally, I made it!!");
                 eventList.clear();
                 for( DataSnapshot eventSnapshot: dataSnapshot.getChildren()) {
                     Event event = new Event();
@@ -58,7 +90,6 @@ public class MainActivity extends Activity {
                     event.setYes(eventSnapshot.child("yes").getValue(Long.class));
                     event.setNo(eventSnapshot.child("no").getValue(Long.class));
                     eventList.add(event);
-                    Log.i("Length", eventList.size() + "");
                 }
 
                 sortProbability(); //Sort by highest probability
@@ -75,10 +106,23 @@ public class MainActivity extends Activity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.i("ERROR", "data");
 
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        auth.addAuthStateListener(authListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (authListener != null) {
+            auth.removeAuthStateListener(authListener);
+        }
     }
 
     public void sortProbability(){

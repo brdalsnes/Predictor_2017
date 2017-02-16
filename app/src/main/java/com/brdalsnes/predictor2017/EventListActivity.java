@@ -3,7 +3,6 @@ package com.brdalsnes.predictor2017;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -103,7 +102,6 @@ public class EventListActivity extends Activity {
         categoryList.clear();
         if(category.equals("All")){
             categoryList = (ArrayList<Event>)eventList.clone();
-            Log.i("Len", categoryList.size() + "");
             return;
         }
         for(int i = 0; i < eventList.size(); i++){

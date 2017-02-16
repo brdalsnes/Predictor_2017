@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -118,9 +117,6 @@ public class DisplayActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        Log.i("Cat", categoryList.size() + "");
-        Log.i("Evt", eventList.size() + "");
 
         //Pick two random events
         int[] indexes = getTwoRandomIndexes(categoryList.size());

@@ -3,14 +3,22 @@ package com.brdalsnes.predictor2017;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -22,11 +30,11 @@ public class EventListActivity extends Activity {
 
     private ArrayList<Event> eventList = new ArrayList<>();
     private ArrayList<Event> categoryList = new ArrayList<>();
-
+    private ArrayList<Event> searchList = new ArrayList<>();
 
     @InjectView(R.id.categoriesSpinner) Spinner categoriesSpinner;
     @InjectView(R.id.change_activity_text) TextView change_activity_text;
-
+    @InjectView(R.id.search_bar) EditText search_bar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +44,7 @@ public class EventListActivity extends Activity {
 
         eventList = (ArrayList<Event>) getIntent().getSerializableExtra("eventList");
         categoryList = (ArrayList<Event>)eventList.clone();
+        searchList = (ArrayList<Event>)eventList.clone();
 
         //Dropdown customization
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.category_arrays, R.layout.custom_spinner_item);
@@ -66,11 +75,31 @@ public class EventListActivity extends Activity {
                         updateCategory("ST");
                         break;
                 }
+                searchList = (ArrayList<Event>)categoryList.clone();
+                onResume();
+            }
+
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        //Search
+        search_bar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updateSearch(search_bar.getText().toString());
                 onResume();
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+            public void afterTextChanged(Editable s) {
 
             }
         });
@@ -93,7 +122,7 @@ public class EventListActivity extends Activity {
 
         //Create list
         list = (ListView) findViewById(R.id.listView);
-        eventAdapter = new EventAdapter(EventListActivity.this, categoryList);
+        eventAdapter = new EventAdapter(EventListActivity.this, searchList);
         list.setAdapter(eventAdapter);
         eventAdapter.notifyDataSetChanged();
     }
@@ -109,5 +138,26 @@ public class EventListActivity extends Activity {
                 categoryList.add(eventList.get(i));
             }
         }
+    }
+
+    public void updateSearch(String search){
+        searchList.clear();
+        for(int i = 0; i < categoryList.size(); i++){
+            if(categoryList.get(i).getStatement().toLowerCase().contains(search.toLowerCase())){
+                searchList.add(categoryList.get(i));
+            }
+        }
+    }
+
+    public void sortProbability(){
+        Collections.sort(eventList, new Comparator<Event>() {
+            @Override
+            public int compare(Event lhs, Event rhs) {
+                if(lhs.getProbability() == rhs.getProbability()){
+                    return 0;
+                }
+                return lhs.getProbability() > rhs.getProbability() ? -1 : 1;
+            }
+        });
     }
 }

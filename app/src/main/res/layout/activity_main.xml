@@ -8,6 +8,14 @@
     android:background="@color/bar"
     android:padding="8dp">
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/icon"
+        android:layout_above="@+id/info_text"
+        android:padding="8dp"
+        android:src="@drawable/icon"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

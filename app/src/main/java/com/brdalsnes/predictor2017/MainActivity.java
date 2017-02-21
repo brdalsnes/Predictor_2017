@@ -72,7 +72,17 @@ public class MainActivity extends Activity {
                 }
             }
         });
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        auth.addAuthStateListener(authListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         //Make list of all events
         database.child("Events").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -86,10 +96,12 @@ public class MainActivity extends Activity {
                     event.setImage(eventSnapshot.child("image").getValue(String.class));
                     event.setStatement(eventSnapshot.child("state").getValue(String.class));
                     event.setCategory(eventSnapshot.child("cat").getValue(String.class));
-                    event.setProbability(eventSnapshot.child("probability").getValue(Double.class));
+                    event.setProbability(eventSnapshot.child("pro").getValue(Double.class));
                     event.setYes(eventSnapshot.child("yes").getValue(Long.class));
                     event.setNo(eventSnapshot.child("no").getValue(Long.class));
-                    eventList.add(event);
+                    if(event.everythingOkay()){
+                        eventList.add(event);
+                    }
                 }
 
                 sortProbability(); //Sort by highest probability
@@ -109,12 +121,6 @@ public class MainActivity extends Activity {
 
             }
         });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        auth.addAuthStateListener(authListener);
     }
 
     @Override

@@ -2,12 +2,7 @@ package com.brdalsnes.predictor2017;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +10,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
 import java.util.ArrayList;
 
 
 /**
  * Created by Bjornar on 05/08/2015.
  */
-public class EventAdapter extends BaseAdapter implements View.OnClickListener {
+public class EventAdapter extends BaseAdapter {
 
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
     private Activity activity;
     private ArrayList<Event> eventList = new ArrayList<>();
     private static LayoutInflater inflater = null;
@@ -95,78 +84,9 @@ public class EventAdapter extends BaseAdapter implements View.OnClickListener {
             String probabilityText = round(tempEvent.getProbability(),1) + "%";
             holder.probabilityTextView.setText(probabilityText);
             holder.probabilityTextView.setTextColor(getColor(tempEvent.getProbability()));
-
-            //Image things
-            final long ONE_MEGABYTE = 1024 * 1024;
-            final StorageReference storageReference = storage.getReferenceFromUrl("gs://predictor2017-b6577.appspot.com");
-            StorageReference imageRef = storageReference.child(tempEvent.getImage() + ".jpg");
-
-            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    Bitmap bitImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    DisplayMetrics dm = new DisplayMetrics();
-                    activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-
-                    holder.eventImageView.getLayoutParams().height = 200;
-                    holder.eventImageView.getLayoutParams().width = 200;
-                    holder.eventImageView.setImageBitmap(bitImage);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                }
-            });
-
-            //Set clicks
-            holder.eventImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openEvent(position);
-                }
-            });
-            holder.eventStatement.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openEvent(position);
-                }
-            });
-            holder.probabilityTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openEvent(position);
-                }
-            });
         }
 
         return convertView;
-    }
-
-    @Override
-    public void onClick(View v) {
-        Log.i("CustomAdapter", "=====Row button clicked=====");
-    }
-
-    private class OnItemClickListener implements View.OnClickListener{
-        private int position;
-
-        public OnItemClickListener(int position){
-            this.position = position;
-        }
-
-        @Override
-        public void onClick(View v) {
-            Log.i("CustomAdapter", "=====Row button clicked=====");
-
-            MainActivity sct = (MainActivity)activity;
-            //sct.onItemClick(position);
-        }
-    }
-
-
-    public void openEvent(int position){
-
     }
 
     public int getColor(double power) {

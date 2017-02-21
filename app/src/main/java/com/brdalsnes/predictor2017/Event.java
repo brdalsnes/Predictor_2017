@@ -78,4 +78,9 @@ public class Event implements Serializable {
     public void addNo(){
         this.no ++;
     }
+
+    public boolean everythingOkay(){
+        return (this.image != null && this.statement != null && this.category != null &&
+                this.probability != null && this.yes != null && this.no != null);
+    }
 }

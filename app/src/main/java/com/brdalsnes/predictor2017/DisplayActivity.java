@@ -2,10 +2,7 @@ package com.brdalsnes.predictor2017;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,12 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -31,7 +24,6 @@ import butterknife.InjectView;
 public class DisplayActivity extends Activity {
 
     private DatabaseReference database;
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
     private ArrayList<Event> eventList = new ArrayList<>();
     private ArrayList<Event> categoryList = new ArrayList<>();
 
@@ -126,49 +118,18 @@ public class DisplayActivity extends Activity {
         statement1.setText(event1.getStatement());
         statement2.setText(event2.getStatement());
 
-
-        final long ONE_MEGABYTE = 1024 * 1024;
-        final StorageReference storageReference = storage.getReferenceFromUrl("gs://predictor2017-b6577.appspot.com");
-        StorageReference image1Ref = storageReference.child(event1.getImage() + ".jpg");
-        StorageReference image2Ref = storageReference.child(event2.getImage() + ".jpg");
-
+        //Image metrics
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        image1.setMinimumHeight(dm.heightPixels);
+        image1.setMinimumWidth(dm.widthPixels);
+        image2.setMinimumHeight(dm.heightPixels);
+        image2.setMinimumWidth(dm.widthPixels);
         //Display
-        //Image1
-        image1Ref.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bm = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                DisplayMetrics dm = new DisplayMetrics();
-                getWindowManager().getDefaultDisplay().getMetrics(dm);
+        new ImageDownloader(image1).execute(event1.getImage());
+        new ImageDownloader(image2).execute(event2.getImage());
 
-                image1.setMinimumHeight(dm.heightPixels);
-                image1.setMinimumWidth(dm.widthPixels);
-                image1.setImageBitmap(bm);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-            }
-        });
-        //Image2
-        image2Ref.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bm = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                DisplayMetrics dm = new DisplayMetrics();
-                getWindowManager().getDefaultDisplay().getMetrics(dm);
-
-                image2.setMinimumHeight(dm.heightPixels);
-                image2.setMinimumWidth(dm.widthPixels);
-                image2.setImageBitmap(bm);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-            }
-        });
+        //Clicks
         layout1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -181,6 +142,7 @@ public class DisplayActivity extends Activity {
                 handleClick(event2, event1);
             }
         });
+
 
     }
 
@@ -205,7 +167,7 @@ public class DisplayActivity extends Activity {
         double probability = calculateProbability(chosenEvent.getYes(), chosenEvent.getNo());
         //Update database
         database.child("Events").child(chosenEvent.getName()).child("yes").setValue(chosenEvent.getYes());
-        database.child("Events").child(chosenEvent.getName()).child("probability").setValue(probability);
+        database.child("Events").child(chosenEvent.getName()).child("pro").setValue(probability);
 
         //Event not chosen
         otherEvent.addNo();
@@ -213,7 +175,7 @@ public class DisplayActivity extends Activity {
         probability = calculateProbability(otherEvent.getYes(), otherEvent.getNo());
         //Update
         database.child("Events").child(otherEvent.getName()).child("no").setValue(otherEvent.getNo());
-        database.child("Events").child(otherEvent.getName()).child("probability").setValue(probability);
+        database.child("Events").child(otherEvent.getName()).child("pro").setValue(probability);
 
         onResume();
     }
